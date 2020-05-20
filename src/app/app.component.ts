@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { of } from "rxjs";
+import { delay, tap } from "rxjs/operators";
 
 import { BtnAction, BtnState } from "actor-btn";
 
@@ -17,14 +17,17 @@ export class AppComponent {
   btnActionPm: BtnAction;
   btnActionVoid: BtnAction;
   btnActionBl: BtnAction;
+  btnActionHeaders: BtnAction;
   btnState1: BtnState;
   btnState2: BtnState;
   btnState3: BtnState;
   btnState4: BtnState;
 
+  btnHeaders: any;
+
   ngOnInit() {
     this.btnActionOb = {
-      act: this.asyncOperation
+      act: () => of("sucess").pipe(delay(2000))
     };
     this.btnActionPm = {
       act: this.asyncOperationWithPromise
@@ -35,10 +38,14 @@ export class AppComponent {
     this.btnActionBl = {
       act: this.asyncOperationWithBoolean
     };
+    this.btnActionHeaders = {
+      act: options => this.asyncOperation(options)
+    };
   }
 
-  asyncOperation() {
-    return of("sucess").pipe(delay(2000));
+  asyncOperation(options: { [name: string]: any }) {
+    this.btnHeaders = options.headers.has('actorBtn');
+    return of().pipe(delay(2000));
   }
 
   asyncOperationWithPromise() {
